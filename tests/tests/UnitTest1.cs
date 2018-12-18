@@ -19,7 +19,7 @@ namespace PSRos
 
 namespace SampleModule
 {
-    [Cmdlet(VerbsCommon.Get, ""Foo"")]
+    [Cmdlet(""Eradicate"", ""Foo"")]
     public class GetFooCmdlet : PSCmdlet
     {
 
@@ -29,6 +29,7 @@ namespace SampleModule
             DiagnosticAnalyzer da = new PowerShellModuleAnalyzer();
             Diagnostic[] results = DiagnosticVerifier.GetSortedDiagnostics(new[] { program }, LanguageNames.CSharp, da);
             results.Should().NotBeEmpty();
+            results[0].GetMessage().Should().Be("Cmdlet 'GetFooCmdlet' has a non-standard verb 'Eradicate'");
         }
     }
 }

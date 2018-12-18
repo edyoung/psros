@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Linq;
 using System.Collections.Immutable;
+using System.Management.Automation;
+using System.Reflection;
+
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 
@@ -11,6 +14,42 @@ namespace PSRos
     {
         private const string DiagnosticId = "Analyzer1";
         private const string Category = "Naming";
+
+        private static IImmutableSet<string> allVerbs;
+        private static IImmutableSet<string> AllVerbs
+        {
+            get
+            {
+                if (null == allVerbs)
+                {
+                    var builder = ImmutableHashSet.CreateBuilder<string>();
+
+                    Type[] verbTypes = new Type[] {
+                        typeof(VerbsCommon),
+                        typeof(VerbsCommunications),
+                        typeof(VerbsData),
+                        typeof(VerbsDiagnostic),
+                        typeof(VerbsLifecycle),
+                        typeof(VerbsOther),
+                        typeof(VerbsSecurity)
+                    };
+
+                    foreach (Type type in verbTypes)
+                    {
+                        foreach (FieldInfo field in type.GetFields())
+                        {
+                            if (field.IsLiteral)
+                            {
+                                builder.Add(field.Name);
+                            }
+                        }
+                    }
+
+                    allVerbs = builder.ToImmutableHashSet();
+                }
+                return allVerbs;
+            }
+        }
 
         private static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
             id: DiagnosticId,
@@ -43,11 +82,21 @@ namespace PSRos
             foreach (var attr in namedTypeSymbol.GetAttributes())
             {
                 var attrClass = attr.AttributeClass;
-                var arg = attr.ConstructorArguments.First();
+                if (attrClass.Name != "CmdletAttribute")
+                {
+                    continue;
+                }
 
-                var verb = arg.Value as String;
+                // symbol is a [cmdlet] attribute, and must always have 2 arguments: verb, noun
+                if (attr.ConstructorArguments.Count() != 2)
+                {
+                    continue; // compiler will tell user they have a problem
+                }
 
-                if (verb != "Remove")
+                var verb = attr.ConstructorArguments[0].Value as String;
+                var noun = attr.ConstructorArguments[1].Value as String;
+
+                if (!AllVerbs.Contains(verb))
                 {
                     var diagnostic = Diagnostic.Create(Rule, namedTypeSymbol.Locations[0], namedTypeSymbol.Name, verb);
                     context.ReportDiagnostic(diagnostic);
