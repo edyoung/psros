@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
@@ -31,7 +32,16 @@ namespace PSRos
 
         private static void AnalyzeSymbol(SymbolAnalysisContext context)
         {
+            var namedTypeSymbol = (INamedTypeSymbol)context.Symbol;
 
+            // Find just those named type symbols with names containing lowercase letters.
+            if (namedTypeSymbol.Name.ToCharArray().Any(char.IsLower))
+            {
+                // For all such symbols, produce a diagnostic.
+                var diagnostic = Diagnostic.Create(Rule, namedTypeSymbol.Locations[0], namedTypeSymbol.Name);
+
+                context.ReportDiagnostic(diagnostic);
+            }
         }
     }
 }
