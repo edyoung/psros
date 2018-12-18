@@ -28,11 +28,26 @@ namespace PSRos
             // TODO: Consider registering other actions that act on syntax instead of or in addition to symbols
             // See https://github.com/dotnet/roslyn/blob/master/docs/analyzers/Analyzer%20Actions%20Semantics.md for more information
             context.RegisterSymbolAction(AnalyzeSymbol, SymbolKind.NamedType);
+            context.RegisterCompilationAction(OnCompilationComplete);
+        }
+
+        private static void OnCompilationComplete(CompilationAnalysisContext context)
+        {
+
         }
 
         private static void AnalyzeSymbol(SymbolAnalysisContext context)
         {
             var namedTypeSymbol = (INamedTypeSymbol)context.Symbol;
+
+            foreach (var attr in namedTypeSymbol.GetAttributes())
+            {
+                var attrClass = attr.AttributeClass;
+                foreach (var arg in attr.ConstructorArguments)
+                {
+
+                }
+            }
 
             // Find just those named type symbols with names containing lowercase letters.
             if (namedTypeSymbol.Name.ToCharArray().Any(char.IsLower))
