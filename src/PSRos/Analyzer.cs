@@ -14,12 +14,12 @@ namespace PSRos
 
         private static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
             id: DiagnosticId,
-            title: "Type name contains lowercase letters",
-            messageFormat: "Type name '{0}' contains lowercase letters",
+            title: "Cmdlet name not a standard verb",
+            messageFormat: "Cmdlet '{0}' has a non-standard verb '{1}'",
             category: Category,
             defaultSeverity: DiagnosticSeverity.Warning,
             isEnabledByDefault: true,
-            description: "Type names should be all uppercase.");
+            description: "Check verbs are consistent");
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get { return ImmutableArray.Create(Rule); } }
 
@@ -43,19 +43,15 @@ namespace PSRos
             foreach (var attr in namedTypeSymbol.GetAttributes())
             {
                 var attrClass = attr.AttributeClass;
-                foreach (var arg in attr.ConstructorArguments)
+                var arg = attr.ConstructorArguments.First();
+
+                var verb = arg.Value as String;
+
+                if (verb != "Remove")
                 {
-
+                    var diagnostic = Diagnostic.Create(Rule, namedTypeSymbol.Locations[0], namedTypeSymbol.Name, verb);
+                    context.ReportDiagnostic(diagnostic);
                 }
-            }
-
-            // Find just those named type symbols with names containing lowercase letters.
-            if (namedTypeSymbol.Name.ToCharArray().Any(char.IsLower))
-            {
-                // For all such symbols, produce a diagnostic.
-                var diagnostic = Diagnostic.Create(Rule, namedTypeSymbol.Locations[0], namedTypeSymbol.Name);
-
-                context.ReportDiagnostic(diagnostic);
             }
         }
     }
