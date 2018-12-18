@@ -7,4 +7,10 @@ namespace SampleModule
     {
 
     }
+
+    [Cmdlet("BadVerb", "Foo")]
+    public class GetFooCmdlet2 : PSCmdlet
+    {
+
+    }
 }
