@@ -2,6 +2,7 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <RunCodeAnalysis>true</RunCodeAnalysis>
+    <!-- <CodeAnalysisRuleSet>SampleModule.ruleset</CodeAnalysisRuleSet> -->
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="PowerShellStandard.Library" Version="5.1.0" />

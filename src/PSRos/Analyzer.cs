@@ -12,7 +12,7 @@ namespace PSRos
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class PowerShellModuleAnalyzer : DiagnosticAnalyzer
     {
-        private const string DiagnosticId = "Analyzer1";
+        private const string DiagnosticId = "PS0001";
         private const string Category = "Naming";
 
         private static IImmutableSet<string> allVerbs;
@@ -56,7 +56,7 @@ namespace PSRos
             title: "Cmdlet name not a standard verb",
             messageFormat: "Cmdlet '{0}' has a non-standard verb '{1}'",
             category: Category,
-            defaultSeverity: DiagnosticSeverity.Warning,
+            defaultSeverity: DiagnosticSeverity.Error,
             isEnabledByDefault: true,
             description: "Check verbs are consistent");
 

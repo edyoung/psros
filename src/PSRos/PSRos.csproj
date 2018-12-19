@@ -11,6 +11,7 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.CodeAnalysis" Version="2.8.2" />
     <PackageReference Include="PowerShellStandard.Library" Version="5.1.0" />
+    <!-- <PackageReference Include="System.Management.Automation" Version="6.0.5"/> -->
   </ItemGroup>
   <ItemGroup>
     <Content Include="tools\*install.ps1">
