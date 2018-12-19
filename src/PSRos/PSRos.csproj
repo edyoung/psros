@@ -1,9 +1,23 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Version>0.1.0</Version>
+    <Authors>EdYoung</Authors>
+    <Company />
+    <!-- build output always gets put under $(TargetFramework), which doesn't work for analyzers, so smuggle it via content -->
+    <IncludeBuildOutput>false</IncludeBuildOutput>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.CodeAnalysis" Version="2.10.0"/>
-    <PackageReference Include="PowerShellStandard.Library" Version="5.1.0"/>
+    <PackageReference Include="Microsoft.CodeAnalysis" Version="2.10.0" />
+    <PackageReference Include="PowerShellStandard.Library" Version="5.1.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="tools\*install.ps1">
+      <PackagePath>tools</PackagePath>
+    </Content>
+    <Content Include="bin\debug\netstandard2.0\psros.dll">
+      <PackagePath>analyzers/dotnet/cs</PackagePath>
+    </Content>
   </ItemGroup>
 </Project>
